@@ -39,7 +39,7 @@
             <artifactId>easyexcel</artifactId>
             <version>3.1.1</version>
         </dependency>
-
+        <!--minio start-->
         <dependency>
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
@@ -52,6 +52,12 @@
             <version>0.9.3</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.10.0</version>
+        </dependency>
+        <!--minio end-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
