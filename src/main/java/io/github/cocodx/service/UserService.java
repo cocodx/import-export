@@ -1,5 +1,9 @@
 package io.github.cocodx.service;
 
+import io.github.cocodx.entity.User;
+
+import java.util.List;
+
 /**
 * @author amazfit
 * @description 针对表【t_user】的数据库操作Service
@@ -7,4 +11,5 @@ package io.github.cocodx.service;
 */
 public interface UserService {
 
+    List<User> findList();
 }

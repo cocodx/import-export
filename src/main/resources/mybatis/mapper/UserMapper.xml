@@ -25,4 +25,7 @@
         id_number,create_by,update_by,
         create_time,update_time,remark
     </sql>
+    <select id="findList" resultMap="BaseResultMap">
+        SELECT * FROM t_user WHERE 1=1
+    </select>
 </mapper>
