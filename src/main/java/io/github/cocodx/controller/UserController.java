@@ -1,6 +1,8 @@
 package io.github.cocodx.controller;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.write.metadata.WriteSheet;
 import io.github.cocodx.dto.UserDto;
 import io.github.cocodx.entity.User;
 import io.github.cocodx.service.UserService;
@@ -8,16 +10,17 @@ import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,6 +55,17 @@ public class UserController {
         EasyExcel.write(outputStream).head(UserDto.class).sheet("用户数据").doWrite(userData);
     }
 
+    @RequestMapping("/downloadTemplate")
+    public void downloadTemplate(HttpServletResponse response) throws IOException {
+        String realPath = ResourceUtils.getURL("classpath:").getPath()+"/excel";
+        FileInputStream fileInputStream = new FileInputStream(new File(realPath, "user_template.xlsx"));
+        ServletOutputStream outputStream = (ServletOutputStream) responseSetHeader(response, "user_template.xlsx");
+        IOUtils.copy(fileInputStream,outputStream);
+        IOUtils.closeQuietly(fileInputStream);
+        IOUtils.closeQuietly(outputStream);
+
+    }
+
     /**
      * 导出之前，将文件流写入minio
      * @param response
@@ -83,6 +97,31 @@ public class UserController {
 
         //返回下载路径
         return "http://localhost:9000/"+bucket+"/"+fileName;
+
+        //最后要关闭流
+    }
+
+    /**
+     * 追加写数据
+     */
+    public void writeFileData() throws FileNotFoundException {
+        ExcelWriter excelWriter = null;
+        try{
+            excelWriter = EasyExcel.write()
+                    //指定模板文件
+                    .withTemplate(new FileInputStream("123"))
+                    //指定目标文件
+                    .file(new File("xxxx.xlsx")).autoCloseStream(false).build();
+
+            WriteSheet writeSheet = EasyExcel.writerSheet("用户数据").build();
+            List<User> users = new ArrayList<>();
+            excelWriter.write(users,writeSheet);
+        }finally {
+            // 千万别忘记finish 会帮忙关闭流
+            if (excelWriter != null) {
+                excelWriter.finish();
+            }
+        }
     }
 
     /**
