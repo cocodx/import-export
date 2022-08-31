@@ -2,6 +2,7 @@ package io.github.cocodx;
 
 import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
+import io.github.cocodx.dto.CardDto;
 import io.github.cocodx.dto.UserDto;
 import io.github.cocodx.entity.User;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -46,6 +47,10 @@ public class EasypoiTest {
             userDto.setAge(20);
             userDto.setStatus("1");
             userDto.setHabbys(Arrays.asList("打篮球","看书","看片"));
+            CardDto cardDto = new CardDto();
+            cardDto.setNo("123456");
+            cardDto.setAddress("北京市朝阳区国贸大厦三层507A");
+            userDto.setCardDto(cardDto);
             return userDto;
         }).collect(Collectors.toList());
         Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("用户信息列表", "用户信息"), UserDto.class, collect);
