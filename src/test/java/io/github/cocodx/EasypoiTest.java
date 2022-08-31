@@ -2,14 +2,20 @@ package io.github.cocodx;
 
 import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
+import cn.afterturn.easypoi.excel.entity.TemplateExportParams;
 import io.github.cocodx.dto.CardDto;
 import io.github.cocodx.dto.OrderDto;
 import io.github.cocodx.dto.UserDto;
 import io.github.cocodx.entity.User;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -70,8 +76,48 @@ public class EasypoiTest {
     }
 
 
+    /**
+     * CsvExportUtil 导出csv文件
+     * 根据文件格式，和导出列，生成模板
+     *
+     * 然后easyExcel根据 这个文件去进行读写
+     */
     @Test
-    public void templateExport(){
-        
+    public void templateExport() throws IOException {
+        Map<Integer,String> param = new HashMap<>();
+        param.put(0,"序号");
+        param.put(1,"登录账号");
+        param.put(2,"用户昵称");
+        param.put(3,"员工姓名");
+        param.put(4,"归属机构");
+        param.put(5,"归属公司");
+        param.put(6,"状态");
+        param.put(7,"更新时间");
+        param.put(8,"电子邮箱");
+        param.put(9,"手机号码");
+        param.put(10,"办公号码");
+        //创建一个工作簿
+        Workbook wb = new HSSFWorkbook();
+        //创建一个工作表
+        Sheet sheet = wb.createSheet("用户数据");
+        //创建一个行
+        Row row = sheet.createRow(0);
+        for (int i = 0; i < param.size(); i++) {
+            Cell cell = row.createCell(i);
+            cell.setCellValue(param.get(i));
+        }
+        FileOutputStream fileOutputStream = new FileOutputStream("D:\\根据格式和列导出模板.xls");
+        wb.write(fileOutputStream);
+        //关闭流
+        fileOutputStream.close();
+
+    }
+
+    /**
+     * 
+     */
+    @Test
+    public void exportDataWithTemplate() throws IOException {
+
     }
 }
