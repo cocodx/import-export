@@ -3,6 +3,7 @@ package io.github.cocodx;
 import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import cn.afterturn.easypoi.excel.entity.TemplateExportParams;
+import cn.afterturn.easypoi.excel.entity.params.ExcelExportEntity;
 import io.github.cocodx.dto.CardDto;
 import io.github.cocodx.dto.OrderDto;
 import io.github.cocodx.dto.UserDto;
@@ -114,10 +115,47 @@ public class EasypoiTest {
     }
 
     /**
-     * 
+     *
      */
     @Test
     public void exportDataWithTemplate() throws IOException {
+        try {
+            //表头
+            List<ExcelExportEntity> entity = new ArrayList<ExcelExportEntity>();
+            //构造对象等同于@Excel
+            entity.add(new ExcelExportEntity("省份","province",30));
+            entity.add(new ExcelExportEntity("城市","city",30));
+//            ExcelExportEntity excelentity = new ExcelExportEntity("姓名", "name");
+//            excelentity.setNeedMerge(true);
+//            entity.add(excelentity);
+//            entity.add(new ExcelExportEntity("性别", "sex"));
+//            excelentity = new ExcelExportEntity(null, "students");
 
+//            List<ExcelExportEntity> temp = new ArrayList<ExcelExportEntity>();
+//            temp.add(new ExcelExportEntity("姓名", "name"));
+//            temp.add(new ExcelExportEntity("性别", "sex"));
+//            //构造List等同于@ExcelCollection
+//            excelentity.setList(temp);
+//            entity.add(excelentity);
+
+            //数据
+            List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+            for (int i = 0; i < 10; i++) {
+                Map<String,Object> value = new HashMap<>();
+                value.put("province","北京");
+                value.put("city","北京");
+                list.add(value);
+            }
+
+            //把我们构造好的bean对象放到params就可以了
+            Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("测试", "测试"), entity, list);
+            FileOutputStream fos = new FileOutputStream("D:/easypoi自由导出列名.xls");
+            workbook.write(fos);
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
