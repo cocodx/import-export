@@ -1,8 +1,5 @@
 package io.github.cocodx.controller;
 
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.write.metadata.WriteSheet;
 import io.github.cocodx.dto.UserDto;
 import io.github.cocodx.entity.User;
 import io.github.cocodx.service.UserService;
@@ -52,7 +49,6 @@ public class UserController {
         String fileName = "user.xlsx";
         OutputStream outputStream = responseSetHeader(response, fileName);
         List<User> userData = userService.findList();
-        EasyExcel.write(outputStream).head(UserDto.class).sheet("用户数据").doWrite(userData);
     }
 
     @RequestMapping("/downloadTemplate")
@@ -77,7 +73,6 @@ public class UserController {
         //创建流
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         List<User> userData = userService.findList();
-        EasyExcel.write(bos).head(UserDto.class).sheet("用户数据").doWrite(userData);
 
         String bucket = "user";
 
@@ -105,23 +100,7 @@ public class UserController {
      * 追加写数据
      */
     public void writeFileData() throws FileNotFoundException {
-        ExcelWriter excelWriter = null;
-        try{
-            excelWriter = EasyExcel.write()
-                    //指定模板文件
-                    .withTemplate(new FileInputStream("123"))
-                    //指定目标文件
-                    .file(new File("xxxx.xlsx")).autoCloseStream(false).build();
 
-            WriteSheet writeSheet = EasyExcel.writerSheet("用户数据").build();
-            List<User> users = new ArrayList<>();
-            excelWriter.write(users,writeSheet);
-        }finally {
-            // 千万别忘记finish 会帮忙关闭流
-            if (excelWriter != null) {
-                excelWriter.finish();
-            }
-        }
     }
 
     /**
