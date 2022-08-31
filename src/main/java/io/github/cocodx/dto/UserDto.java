@@ -1,10 +1,7 @@
 package io.github.cocodx.dto;
 
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
-import cn.afterturn.easypoi.excel.annotation.ExcelEntity;
-import cn.afterturn.easypoi.excel.annotation.ExcelIgnore;
-import cn.afterturn.easypoi.excel.annotation.ExcelTarget;
+import cn.afterturn.easypoi.excel.annotation.*;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -125,4 +122,7 @@ public class UserDto implements Serializable {
      */
     @ExcelEntity
     private CardDto cardDto;
+
+    @ExcelCollection(name = "订单列表")
+    private List<OrderDto> orderDtos;
 }
