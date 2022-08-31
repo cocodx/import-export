@@ -16,13 +16,13 @@ import java.io.FileOutputStream;
 public class Test1 {
 
     /**
-     * 创建一个xls
+     * 创建一个xls,是03版本的，支持65537最大写入
      */
     @Test
     public void test1()throws Exception{
         //创建一个工作簿
         Workbook wb = new HSSFWorkbook();
-        //创建一个工作表
+        //创建一个工作表 xls
         Sheet sheet = wb.createSheet("用户数据");
         //创建一个行
         Row row = sheet.createRow(0);
@@ -43,4 +43,13 @@ public class Test1 {
         //关闭流
         fileOutputStream.close();
     }
+
+    /**
+     * 创建xlsx
+     */
+    @Test
+    public void test2(){
+
+    }
+
 }
