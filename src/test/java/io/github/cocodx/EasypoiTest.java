@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,6 +45,7 @@ public class EasypoiTest {
             BeanUtils.copyProperties(item, userDto);
             userDto.setAge(20);
             userDto.setStatus("1");
+            userDto.setHabbys(Arrays.asList("打篮球","看书","看片"));
             return userDto;
         }).collect(Collectors.toList());
         Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("用户信息列表", "用户信息"), UserDto.class, collect);

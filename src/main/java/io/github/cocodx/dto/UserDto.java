@@ -8,6 +8,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -100,4 +101,21 @@ public class UserDto implements Serializable {
     private String remark;
 
 
+    /**
+     * 用户的喜好
+     */
+    @Excel(name = "爱好",width = 20.0)
+    @ExcelIgnore
+    private List<String> habbys;
+
+    @Excel(name = "爱好",width = 20.0)
+    private String habbysStr;
+
+    public String getHabbysStr() {
+        StringBuilder stringBuilder = new StringBuilder();
+        habbys.stream().forEach(e->{
+            stringBuilder.append(e).append("、");
+        });
+        return stringBuilder.toString();
+    }
 }
