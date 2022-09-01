@@ -8,6 +8,7 @@ import io.github.cocodx.dto.CardDto;
 import io.github.cocodx.dto.OrderDto;
 import io.github.cocodx.dto.UserDto;
 import io.github.cocodx.entity.User;
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -148,14 +149,68 @@ public class EasypoiTest {
             }
 
             //把我们构造好的bean对象放到params就可以了
-            Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("测试", "测试"), entity, list);
-            FileOutputStream fos = new FileOutputStream("D:/easypoi自由导出列名.xls");
+            Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(), entity, list);
+            FileOutputStream fos = new FileOutputStream("D:\\easypoi自由导出列名.csv");
             workbook.write(fos);
             fos.close();
+            workbook.close();
+
+
+            //追加一行
+            Map<String,Object> param = new HashMap<>();
+            Workbook workbook1 = ExcelExportUtil.exportExcel(new TemplateExportParams("D:\\easypoi自由导出列名.xls"), param);
+
+            Sheet sheetAt = workbook1.getSheetAt(0);
+            int lastRowNum = sheetAt.getLastRowNum();
+            Row row = sheetAt.createRow(lastRowNum + 1);
+            Cell cell = row.createCell(0);
+            cell.setCellValue("追加一行");
+            FileOutputStream fos1 = new FileOutputStream("D:\\easypoi自由导出列名.xls");
+            workbook1.write(fos1);
+            fos1.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 定义，追加自定义内容操作
+     */
+    @Test
+    public void testAddFileMethod()throws Exception{
+        FileOutputStream fileOutputStream = new FileOutputStream("D:\\用poi搞出来的工作铺子03.xls");
+        Map<String,Object> param = new HashMap<>();
+//        param.put("序号","key");
+//        param.put("登录账号","userName");
+        Workbook workbook = ExcelExportUtil.exportExcel(new TemplateExportParams("D:\\根据格式和列导出模板.xls"), param);
+
+        //拿第一个sheet
+        Sheet sheetAt = workbook.getSheetAt(0);
+
+        int lastRowNum = sheetAt.getLastRowNum();
+
+        for (int i = 1; i < 11; i++) {
+            Row row = sheetAt.createRow(lastRowNum + i);
+            for (int j = 0; j < 10; j++) {
+                Cell cell = row.createCell(j);
+                cell.setCellValue(i);
+            }
+        }
+
+        System.out.println(lastRowNum);
+
+//        FileOutputStream fileOutputStream = new FileOutputStream("D:\\续写文件.xls");
+        workbook.write(fileOutputStream);
+        fileOutputStream.close();
+        workbook.close();
+
+    }
+
+    @Test
+    public void test(){
+        System.out.println(Math.ceil(11/2.00));
+    }
+
 }
