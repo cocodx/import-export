@@ -8,17 +8,25 @@ import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author amazfit
@@ -115,5 +123,71 @@ public class UserController {
         response.setHeader(HttpHeaders.CONTENT_TYPE, "application/vnd.ms-excel");
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename="+fileName);
         return response.getOutputStream();
+    }
+
+    static Map<String,String> excelHead = new HashMap<>();
+    static {
+        excelHead.put("机构","group");
+        excelHead.put("归属机构","inGroup");
+        excelHead.put("状态","status ");
+        excelHead.put("用户名称","userName");
+        excelHead.put("密码","password");
+        excelHead.put("用户分属公司","company");
+        excelHead.put("电子邮箱","email");
+        excelHead.put("手机号","mobile");
+        excelHead.put("真实姓名","trueName");
+        excelHead.put("昵称","nickName");
+    }
+
+
+    /**
+     * 解析文件，根据传的字段中文名称去解析excel文件
+     * @param file
+     * @param fileHeads
+     */
+    @RequestMapping("/importFile")
+    public void importFile(MultipartFile file,List<Map<String,Object>> fileHeads){
+        List<List<Map<String,Object>>> paramHead = new ArrayList<>();
+
+        Map<String,Integer> columnFile1 = new HashMap<>();
+        columnFile1.put("机构",1);
+        columnFile1.put("归属机构",2);
+        columnFile1.put("状态",3);
+        columnFile1.put("用户分属公司",4);
+        columnFile1.put("电子邮箱",6);
+        columnFile1.put("手机号",8);
+        List<Map<String,Integer>> fileColumn = new ArrayList<>();
+        fileColumn.add(columnFile1);
+
+        Map<String,Integer> columnFile2 = new HashMap<>();
+        columnFile2.put("电子邮箱",6);
+        columnFile2.put("手机号",8);
+        fileColumn.add(columnFile2);
+
+        List<Map<String,Integer>> fileColumn2 = new ArrayList<>();
+        //我给他添加一行表头吗
+        File fileExcel = new File("d:/添加表头.xls");
+        //xls
+        Workbook workbook = new HSSFWorkbook();
+        Sheet sheetAt = workbook.getSheetAt(0);
+        //获取第一行
+        Row row = sheetAt.getRow(0);
+        for (int i = 0; i < fileColumn.size(); i++) {
+            Map<String, Integer> map = fileColumn.get(i);
+
+            Map<String, Integer> propertyColumn = new HashMap<>();
+            for (String chineseName:map.keySet()){
+                String propertyName = excelHead.get(chineseName);
+                Integer index = map.get(chineseName);
+                propertyColumn.put(propertyName,index);
+                Cell cell = row.createCell(index);
+                cell.setCellValue(chineseName);
+            }
+            fileColumn2.add(propertyColumn);
+        }
+
+
+
+
     }
 }
