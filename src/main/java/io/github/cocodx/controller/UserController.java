@@ -1,5 +1,8 @@
 package io.github.cocodx.controller;
 
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import io.github.cocodx.dto.UserDto;
 import io.github.cocodx.entity.User;
 import io.github.cocodx.service.UserService;
@@ -9,14 +12,13 @@ import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -185,9 +187,48 @@ public class UserController {
             }
             fileColumn2.add(propertyColumn);
         }
-
-
-
-
     }
+
+    /**
+     * 根据excel文件，读取前10行数据
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping("/analysisTenRows")
+    public Object analysisTenRows(MultipartFile file) throws IOException {
+        //获取后缀名
+        String fileSuffix = ".xlsx";
+        Workbook workbook = new XSSFWorkbook(file.getInputStream());
+        Sheet sheet = workbook.getSheetAt(0);
+        List<Map<Integer,String>> list = new ArrayList<>();
+        DataFormatter formatter = new DataFormatter();
+        for (int i=0;i<=9;i++){
+            Row row = sheet.getRow(i);
+            Map<Integer,String> mapOjb = new HashMap<>();
+            for (int j = 0; j < row.getLastCellNum(); j++) {
+                mapOjb.put(j,formatter.formatCellValue(row.getCell(j)));
+            }
+            list.add(mapOjb);
+        }
+        workbook.close();
+        return list;
+    }
+
+
+    /**
+     * 测试接收List<Map<String,Integer>>
+     * @param param [{"账号":2,"企业名称":4,"机构":3,"用户名称":0,"电子邮箱":5,"姓名":1},{"电子邮箱":3,"手机号":4}]
+     * @return
+     */
+    @RequestMapping("/testListMap")
+    public Object testListMap(@RequestParam("param") List<String> param){
+        System.out.println(param);
+        for (int i = 0; i < param.size(); i++) {
+            String s = param.get(i);
+            JSONObject jsonObject = JSONUtil.parseObj(s);
+        }
+        return param;
+    }
+
 }

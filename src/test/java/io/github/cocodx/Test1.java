@@ -7,7 +7,11 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author amazfit
@@ -49,6 +53,38 @@ public class Test1 {
      */
     @Test
     public void test2(){
+        //获取根目录
+        System.out.println(System.getProperty("user.dir"));
+
+    }
+
+    /**
+     * 把第一行写入到最后一行
+     */
+    @Test
+    public void test3()throws Exception{
+        File file = new File("d:/续写文件.xls");
+        File file1 = new File("d:/续写文件1.xls");
+        FileInputStream fileInputStream = new FileInputStream(file);
+        FileOutputStream outputStream = new FileOutputStream(file1);
+        Workbook workbook = new HSSFWorkbook(fileInputStream);
+        Sheet sheet = workbook.getSheetAt(0);
+
+        Row firstRow = sheet.getRow(0);
+        Row lastRow = sheet.createRow(sheet.getLastRowNum() + 1);
+        for (int i = 0; i < firstRow.getLastCellNum(); i++) {
+            Cell cell = lastRow.createCell(i);
+            cell.setCellValue(firstRow.getCell(i).getStringCellValue());
+        }
+        workbook.write(outputStream);
+        outputStream.close();
+        List<Cell> firstRowCells = new ArrayList<>();
+    }
+
+    /**
+     *
+     */
+    public void test(){
 
     }
 
